@@ -14,6 +14,7 @@ interface Graph<T> {
     fun getRandomVertex(): Vertex<T>
 
     fun edges(source: Vertex<T>): ArrayList<Edge<T>>
+    fun allEdges(): ArrayList<Edge<T>>
 
     fun weight(
         source: Vertex<T>,

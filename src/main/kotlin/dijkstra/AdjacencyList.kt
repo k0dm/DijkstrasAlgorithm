@@ -28,25 +28,32 @@ class AdjacencyList<T> : Graph<T> {
         return edges(source).firstOrNull { it.destination == destination }?.weight
     }
 
-    override fun setRandomEdges(maxNumberOfEdges: Int, maxWeight:Int) {
+    override fun setRandomEdges(maxNumberOfEdges: Int, maxWeight: Int) {
 
         val vertices = adjacencies.keys
 
         for (currentVertex in vertices) {
 
-            for (i in 0..Random().nextInt(maxNumberOfEdges) ){
-                var randomVertex:Vertex<T>
+            for (i in 0..Random().nextInt(maxNumberOfEdges)) {
+                var randomVertex: Vertex<T>
                 do {
                     randomVertex = vertices.random()
                 } while (currentVertex == randomVertex)
 
-                this.add(currentVertex,randomVertex,Random().nextInt(maxWeight) + 1.0)
+                this.add(currentVertex, randomVertex, Random().nextInt(maxWeight) + 1.0)
             }
         }
 
     }
 
     override fun getRandomVertex() = adjacencies.keys.random()
+    override fun allEdges(): ArrayList<Edge<T>> {
+        val edges = ArrayList<Edge<T>>()
+        adjacencies.keys.forEach {
+            adjacencies[it]?.let { listOfEdges -> edges.addAll(listOfEdges) }
+        }
+        return edges
+    }
 
     override fun toString(): String {
         return buildString { // 1
