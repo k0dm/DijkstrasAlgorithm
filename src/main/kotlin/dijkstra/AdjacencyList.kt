@@ -5,26 +5,23 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class AdjacencyList<T> : Graph<T> {
+class AdjacencyList<T>( private val adjacencies: HashMap<T, ArrayList<Edge<T>>> = HashMap()) : Graph<T> {
 
-    private val adjacencies: HashMap<Vertex<T>, ArrayList<Edge<T>>> = HashMap()
-
-    override fun createVertex(data: T): Vertex<T> {
-        val vertex = Vertex(adjacencies.count(), data)
-        adjacencies[vertex] = ArrayList()
-        return vertex
+    override fun createVertex(data: T):T{
+        if (adjacencies[data]== null)
+            adjacencies[data] = ArrayList()
+        return data
     }
 
-
-    override fun add(source: Vertex<T>, destination: Vertex<T>, weight: Double?) {
+    override fun add(source: T, destination: T, weight: Double?) {
         adjacencies[source]?.add(Edge(source, destination, weight))
         adjacencies[destination]?.add(Edge(destination, source, weight))
     }
 
-    override fun edges(source: Vertex<T>): ArrayList<Edge<T>> =
+    override fun edges(source:T): ArrayList<Edge<T>> =
         adjacencies[source] ?: arrayListOf()
 
-    override fun weight(source: Vertex<T>, destination: Vertex<T>): Double? {
+    override fun weight(source: T, destination: T): Double? {
         return edges(source).firstOrNull { it.destination == destination }?.weight
     }
 
@@ -35,7 +32,7 @@ class AdjacencyList<T> : Graph<T> {
         for (currentVertex in vertices) {
 
             for (i in 0..Random().nextInt(maxNumberOfEdges)) {
-                var randomVertex: Vertex<T>
+                var randomVertex: T
                 do {
                     randomVertex = vertices.random()
                 } while (currentVertex == randomVertex)
@@ -55,11 +52,15 @@ class AdjacencyList<T> : Graph<T> {
         return edges
     }
 
+    override fun clear() {
+        adjacencies.clear()
+    }
+
     override fun toString(): String {
         return buildString { // 1
             adjacencies.forEach { (vertex, edges) -> // 2
-                val edgeString = edges.joinToString { it.destination.data.toString() } // 3
-                append("${vertex.data} ---> [ $edgeString ]\n") // 4
+                val edgeString = edges.joinToString { it.destination.toString() } // 3
+                append("$vertex ---> [ $edgeString ]\n") // 4
             }
         }
     }
