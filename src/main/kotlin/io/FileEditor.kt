@@ -7,9 +7,8 @@ import kotlin.collections.ArrayList
 
 interface FileEditor {
     fun openFile(filename: String): Boolean
-    fun saveDataToFile(fileName: String, lines: Array<String>)
+    fun saveDataToFile(fileName: String, lines: ArrayList<String>)
     fun readDataFromFile(): ArrayList<String>
-    fun closeFile()
 
     class Base : FileEditor {
         private var reader: Scanner? = null
@@ -25,26 +24,31 @@ interface FileEditor {
             }
         }
 
-        override fun saveDataToFile(fileName: String, lines: Array<String>) {
-            val file = File(fileName)
+        override fun saveDataToFile(fileName: String, lines: ArrayList<String>) {
+            val file = File("$fileName.txt")
             file.writeText(lines.joinToString("\n"))
+
+            val isNewFileCreated :Boolean = file.createNewFile()
+
+            if(isNewFileCreated){
+                println("$fileName is created successfully.")
+            } else{
+                println("$fileName already exists.")
+            }
+
         }
 
         override fun readDataFromFile(): ArrayList<String> {
             val lines = ArrayList<String>()
             var line:String
-            while (true) {
+            while (reader!!.hasNext()) {
                 line = reader!!.nextLine()
-                if (line == "") break
                 lines.add(line)
             }
             reader?.close()
             return lines
         }
 
-        override fun closeFile() {
-            reader?.close()
-        }
     }
 }
 

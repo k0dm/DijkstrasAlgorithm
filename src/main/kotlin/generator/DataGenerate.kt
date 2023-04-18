@@ -2,14 +2,18 @@ package generator
 
 import dijkstra.AdjacencyList
 
-interface DataGenerate<T> {
+interface DataGenerate {
 
-    fun generate(numberOfVertex: Int, numberOfEdges:Int, maxWeight:Int): AdjacencyList<T>
+    fun generate(numberOfVertex: Int, numberOfEdges:Int, maxWeight:Int, graph: AdjacencyList<String>): AdjacencyList<String>
 
-    class StringDataGenerator() : DataGenerate<String> {
+    class StringDataGenerator() : DataGenerate {
 
-        override fun generate(numberOfVertex: Int, numberOfEdges:Int, maxWeight:Int): AdjacencyList<String> {
-            val graph = AdjacencyList<String>()
+        override fun generate(
+            numberOfVertex: Int,
+            numberOfEdges: Int,
+            maxWeight: Int,
+            graph: AdjacencyList<String>
+        ): AdjacencyList<String> {
             if (numberOfVertex < 1 || numberOfEdges < 1) return graph
 
             val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
