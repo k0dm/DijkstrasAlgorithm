@@ -5,10 +5,10 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class AdjacencyList<T>( private val adjacencies: HashMap<T, ArrayList<Edge<T>>> = HashMap()) : Graph<T> {
+class AdjacencyList<T>(private val adjacencies: HashMap<T, ArrayList<Edge<T>>> = HashMap()) : Graph<T> {
 
-    override fun createVertex(data: T):T{
-        if (adjacencies[data]== null)
+    override fun createVertex(data: T): T {
+        if (adjacencies[data] == null)
             adjacencies[data] = ArrayList()
         return data
     }
@@ -18,7 +18,7 @@ class AdjacencyList<T>( private val adjacencies: HashMap<T, ArrayList<Edge<T>>> 
         adjacencies[destination]?.add(Edge(destination, source, weight))
     }
 
-    override fun edges(source:T): ArrayList<Edge<T>> =
+    override fun edges(source: T): ArrayList<Edge<T>> =
         adjacencies[source] ?: arrayListOf()
 
     override fun weight(source: T, destination: T): Double? {
@@ -44,6 +44,12 @@ class AdjacencyList<T>( private val adjacencies: HashMap<T, ArrayList<Edge<T>>> 
     }
 
     override fun getRandomVertex() = adjacencies.keys.random()
+
+    override fun getVertex(name: T): T? {
+        return if (adjacencies[name] != null) name
+        else null
+    }
+
     override fun allEdges(): ArrayList<Edge<T>> {
         val edges = ArrayList<Edge<T>>()
         adjacencies.keys.forEach {
@@ -52,6 +58,7 @@ class AdjacencyList<T>( private val adjacencies: HashMap<T, ArrayList<Edge<T>>> 
         return edges
     }
 
+    override fun size() = adjacencies.size
     override fun clear() {
         adjacencies.clear()
     }

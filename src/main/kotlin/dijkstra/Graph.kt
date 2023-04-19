@@ -21,6 +21,8 @@ interface Graph<T> {
         destination: T
     ): Double?
 
+    fun size(): Int
     fun clear()
+    fun getVertex(name: T): T?
 }
 
