@@ -18,7 +18,7 @@ interface DataGenerate {
 
             val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
-            for (i in 0..numberOfVertex) {
+            for (i in 0 until numberOfVertex) {
                 graph.createVertex(List(10) { charPool.random() }.joinToString(""))
             }
 
