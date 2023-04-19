@@ -4,18 +4,17 @@ package dijkstra
 class Dijkstra<T>(private val graph: AdjacencyList<T> = AdjacencyList()) {
 
     private fun route(destination: T, paths: HashMap<T, Visit<T>>): ArrayList<Edge<T>> {
-        var vertex = destination // Start at the destination vertex.
-        val path = arrayListOf<Edge<T>>() // Create a list of edges to store the path.
+        var vertex = destination
+        val path = arrayListOf<Edge<T>>()
         loop@ while (true) {
             val visit = paths[vertex] ?: break
             when (visit.type) {
-                VisitType.EDGE -> visit.edge?.let { // As long as you've not reached the start case, continue to extract the next edge.
-                    path.add(it) // Add this edge to the path.
-                    vertex =
-                        it.source //Set the current vertex to the edge’s source vertex. This moves you closer to the start vertex.
+                VisitType.EDGE -> visit.edge?.let {
+                    path.add(it)
+                    vertex = it.source
                 }
 
-                VisitType.START -> break@loop // Once the while loop reaches the start case, you've completed the path and return it.
+                VisitType.START -> break@loop
             }
         }
         return path
@@ -26,22 +25,23 @@ class Dijkstra<T>(private val graph: AdjacencyList<T> = AdjacencyList()) {
         return path.sumOf { it.weight ?: 0.0 }
     }
 
-    fun shortestPath(start: T): HashMap<T, Visit<T>> {
+    fun shortestPath(start: T, destination: T): HashMap<T, Visit<T>> {
         val paths: HashMap<T, Visit<T>> = HashMap()
-        paths[start] = Visit(VisitType.START) // Define paths and initialize it with the start vertex.
-        // Create a Comparator which uses distances between vertices for sorting
+        paths[start] = Visit(VisitType.START)
+
         val distanceComparator = Comparator<T> { first, second ->
             (distance(second, paths) - distance(first, paths)).toInt()
         }
         // Use the previous Comparator and create a min-priority queue to store the
         //vertices that must be visited.
-        val priorityQueue =
-            ComparatorPriorityQueueImpl(distanceComparator)
+        val priorityQueue = ComparatorPriorityQueueImpl(distanceComparator)
         // Enqueue the start vertex as the first vertex to visit.
         priorityQueue.enqueue(start)
-
         while (true) {
             val vertex = priorityQueue.dequeue() ?: break
+            if (vertex == destination)
+                return paths
+
             val edges = graph.edges(vertex)
             edges.forEach {
                 val weight = it.weight ?: return@forEach
@@ -56,7 +56,7 @@ class Dijkstra<T>(private val graph: AdjacencyList<T> = AdjacencyList()) {
         return paths
     }
 
-    fun shortestPath(destination: T, paths: HashMap<T, Visit<T>>): ArrayList<Edge<T>> {
-        return route(destination, paths)
+    fun shortestPath(destination: T, paths: HashMap<T, Visit<T>>): Path<T> {
+        return Path(route(destination, paths), distance(destination, paths))
     }
 }
