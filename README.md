@@ -1,2 +1,2 @@
 # DijkstrasAlgorithm
-don`t copy this code because it`s a s...
+read data_structures_and_algorithms_in_kotlin to understand it
