@@ -1,6 +1,7 @@
 package dijkstra
 
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
@@ -10,7 +11,7 @@ class ComparatorHeapImpl<Element>(
     override fun compare(a: Element, b: Element): Int =
         comparator.compare(a, b)
 
-    var elements: ArrayList<Element> = ArrayList<Element>()
+     var elements: ArrayList<Element> = ArrayList<Element>()
     override val count: Int
         get() = elements.size
 

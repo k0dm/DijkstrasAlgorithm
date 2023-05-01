@@ -8,16 +8,19 @@ import dijkstra.Visit
 import generator.DataGenerate
 import io.FileEditor
 import io.GraphHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlin.system.measureTimeMillis
 
 // Абстрактний клас команди
 abstract class Command(private val description: String) {
-    abstract fun execute()
+    abstract suspend fun execute()
     override fun toString() = description
 
     class GenerateData(private val graph: AdjacencyList<String>) : Command("Generate data") {
         private val dataGenerator = DataGenerate.StringDataGenerator()
-        override fun execute() {
+        override suspend fun execute() {
 
             print("Enter number of Vertex: ")
             val numberOfVertex = readln().toIntOrNull()
@@ -38,7 +41,7 @@ abstract class Command(private val description: String) {
     class SaveData(private val graph: AdjacencyList<String>) : Command("Save data") {
 
         private val fileEditor = FileEditor.Base()
-        override fun execute() {
+        override suspend fun execute() {
             print("Enter a name of file: ")
             val fileName = readln()
             fileEditor.saveDataToFile(fileName, GraphHelper().convertToStringList(graph.allEdges()))
@@ -48,7 +51,7 @@ abstract class Command(private val description: String) {
     class LoadData(private val graph: AdjacencyList<String>) : Command("Load data from file") {
         private val fileEditor = FileEditor.Base()
 
-        override fun execute() {
+        override suspend fun execute() {
             print("Enter a name of file or path: ")
             val file = readln()
             if (!fileEditor.openFile(file)) {
@@ -62,7 +65,7 @@ abstract class Command(private val description: String) {
 
     class ChooseRandomVertices(private val graph: AdjacencyList<String>, val dijkstra: Dijkstra<String>) :
         Command("Get 2 random vertices") {
-        override fun execute() {
+        override suspend fun execute() {
             val firstVertex = graph.getRandomVertex()
             var secondVertex: String
             do {
@@ -79,7 +82,7 @@ abstract class Command(private val description: String) {
 
     class ChooseTwoVertices(private val graph: AdjacencyList<String>, val dijkstra: Dijkstra<String>) :
         Command("Enter 2 vertices") {
-        override fun execute() {
+        override suspend fun execute() {
             print("Enter the name of the first vertex: ")
             var firstVertex: String
             do {
@@ -102,11 +105,29 @@ abstract class Command(private val description: String) {
         private val secondVertex: String,
         private val dijkstra: Dijkstra<String>
     ): Command("Shortest path") {
-        override fun execute() {
+        override suspend fun execute() {
             val pathsFromSource:HashMap<String, Visit<String>>
             val path:Path<String>
             val executionTime = measureTimeMillis {
-                pathsFromSource = dijkstra.shortestPath(firstVertex, secondVertex) // 1
+                pathsFromSource = dijkstra.shortestPath(firstVertex, secondVertex)
+                path = dijkstra.shortestPath(secondVertex, pathsFromSource)
+            }
+            println("Execution time: $executionTime ms")
+            path.showPath()
+            path.showDistance()
+        }
+    }
+
+    class ShortestPathParallel(
+        private val firstVertex: String,
+        private val secondVertex: String,
+        private val dijkstra: Dijkstra<String>
+    ): Command("Shortest path") {
+        override suspend fun execute() {
+            val pathsFromSource:HashMap<String, Visit<String>>
+            val path:Path<String>
+            val executionTime = measureTimeMillis {
+                pathsFromSource = dijkstra.shortestPathParallel(firstVertex, secondVertex)
                 path = dijkstra.shortestPath(secondVertex, pathsFromSource) // 2
             }
             println("Execution time: $executionTime ms")
@@ -115,10 +136,12 @@ abstract class Command(private val description: String) {
         }
     }
 
+
+
     class StartAlgorithm(private val invoker: Invoker, private val graph: AdjacencyList<String>) :
         Command("Start dijkstra algorithm") {
 
-        override fun execute() {
+        override suspend fun execute() {
             if (graph.size() < 2) {
                 println("Graph doesn`t have at least 2 vertices")
                 return

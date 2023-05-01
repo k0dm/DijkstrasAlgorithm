@@ -1,11 +1,9 @@
 import commands.Command
 
 
-class Invoker( commands: HashMap<Int, Command>) {
+class Invoker(private val commands: HashMap<Int, Command>) {
 
-    private val commands = commands
-
-    fun start() {
+    suspend fun start() {
         while (true){
             println("Enter a number or `q` if you want to quit")
             commands.forEach { (number, command) ->

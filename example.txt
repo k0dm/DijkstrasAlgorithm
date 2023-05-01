@@ -1,0 +1,12 @@
+Singapore,Hong Kong,300.0
+Singapore,Tokyo,500.0
+Hong Kong,Tokyo,250.0
+Hong Kong,San Francisco,600.0
+Tokyo,Detroit,450.0
+Tokyo,Washington DC,300.0
+Detroit,Austin Texas,50.0
+Austin Texas,Washington DC,292.0
+San Francisco,Washington DC,337.0
+Washington DC,Seattle,277.0
+San Francisco,Seattle,218.0
+Austin Texas,San Francisco,297.0
